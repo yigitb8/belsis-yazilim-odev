@@ -1,18 +1,20 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    
+  <head>  
   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" 
   integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">  
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+
     <link rel="stylesheet" href="index.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   
   </head>
   <body>  
+
     
-    <!-- NAVBAR -->
     <div class="container">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
           <img src="imgs/belsis_simge.jfif">
@@ -30,68 +32,92 @@
               </li>
             </ul>
           </div>
-        </nav>
-  </div>
-    <div class="Map-tr">
-      <h3> Türkiye Haritası </h3>
+      </nav>
+    </div>
 
-      <div id="map" class="map"></div>            <!-- Harita siteye bastırıldı. -->
-      <div id="options" class="options">
+      <h4> Türkiye Haritası </h4>
+
+      <div id="map" class="map"></div>   <!-- Harita siteye bastırıldı. -->
+        
+      <br>
+
       <form>
-        <label for="type">Geometry type &nbsp;</label>
+        <label for="type">Geometry type: &nbsp;</label>
         <select id="type">
           <option value="Point">Point</option>
           <option value="LineString">LineString</option>
           <option value="Polygon">Polygon</option>
-          <option value="Circle">Circle</option>
         </select>
       </form>
-      </div>
-    </div>
-      
-      <script src="main.js"></script>
+     
+      <br>
 
-      <!-- KAYIT -->
-      <!-- Modal oluşturulacak-->
-      <div class="formS">
-          <label for="sehir"> ŞEHİR: </label>
-          <input type="text" name="il">
-          <label for="ilce"> İLÇE: </label>
-          <input type="text" name="ilce">
-          <label for="mahalle"> MAHALLE: </label>
-          <input type="text" name="mahalle">
-        </form>
-        <button class="button" name="kayit"> KAYDET </button>
-      </div>
-  
+      <br>
 
-        <!-- EDIT - DeLeTe -->
-        <!-- Modal oluşturulacak -->
-      <div class="formS">
-        <form>
-          <label for="sehir"> ŞEHİR: </label>
-          <input type="text" name="il">
-          <label for="ilce"> İLÇE: </label>
-          <input type="text" name="ilce">
-          <label for="mahalle"> MAHALLE: </label>
-          <input type="text" name="mahalle">
-        </form>
-        <button class="button" name="edit"> UPDATE </button>
-        <button class="button" name="sil"> DELETE </button>
+
+        <!--  SAVE -->
+      <div id="myModalSave" class="modalSave">
+        <div class = "modalSave-content">
+          <span class="closeSave">  &times; </span>
+          <div class = "SaveForm">
+            <form id="parselSaveForm">
+              <label for="sehir"> ŞEHİR: </label>
+              <input type="text" id="ilSave">
+              <label for="ilce"> İLÇE: </label>
+              <input type="text" id="ilceSave">
+              <label for="mahalle"> MAHALLE: </label>
+              <input type="text" id="mahalleSave">
+          </form>
+          <br>
+
+          <button id="saveButton"  type="submit" > SAVE </button>
+
+          </div>
+        </div>
       </div>
-      <div class="uyeler">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">İL</th>
-              <th scope="col">İLÇE</th>
-              <th scope="col">MAHALLE</th>
-            </tr>
-          </thead>
-      
+
+
+      <!--
+
+         Edit - Delete 
+      <div id="myModalDel" class="modalDel">
+        <div class="modalDel-content">
+          <span class="closeDel">  &times; </span>
+          <div class="DeleteForm">
+            <form id="parselDelForm">
+              <label for="sehir"> ŞEHİR: </label>
+              <input type="text" id="ilDelete">
+              <label for="ilce"> İLÇE: </label>
+              <input type="text" id="ilceDelete">
+              <label for="mahalle"> MAHALLE: </label>
+              <input type="text" id="mahalleDelete">
+            </form>
+
+            <br>
+
+            <button id="updButton" type="submit" > UPDATE </button>
+            <button id="delButton" type="submit" > DELETE </button>
+    
+          </div>
+        </div>
       </div>
+    
+    -->
+
+      <table id="parselTable" class="table table-hover table-striped">
+        <thead>    
+          <tr>
+            <th> ID </th>
+            <th> ŞEHİR </th>
+            <th> İLÇE </th>
+            <th> MAHALLE </th>
+          </tr>
+        </thead>
+        <tbody> </tbody>
+      </table>
   
+  <script src="main.js"></script>
+
   </body>
 </html>
 
