@@ -28,6 +28,8 @@ var vector = new ol.layer.Vector({            // çizim araçlarını ayarlar.
   }),
 });
 
+
+
 var map = new ol.Map({                                 // haritayı oluşturur.
   controls: ol.control.defaults({
     attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
@@ -57,15 +59,16 @@ const typeSelect = document.getElementById('type');
 function addInteractions() {
   draw = new ol.interaction.Draw({
     source: source,
-    type: typeSelect.value,
+    type: typeSelect.value
   });
   map.addInteraction(draw);    
   snap = new ol.interaction.Snap({source: source});
-  map.addInteraction(snap);     // çizime odaklanma (snap)
+  map.addInteraction(snap);     // çizime odaklanma
   draw.on('drawend', drawend);
 }
 
-/**
+
+/*
  * Handle change event.
  */
 typeSelect.onchange = function () {
@@ -81,14 +84,15 @@ function modalCreate() {
 }
 
 
-//      Save POP UP 
+//  Save POP UP 
 var modalSave = document.getElementById("myModalSave");
 var span = document.getElementsByClassName("closeSave")[0];
 
 function drawend(event) {
   modalCreate()             // çizim bittince pop up açar.
   feature = event.feature;
-  wktString = wkt.writeFeature(feature);
+  wktString = wkt.writeFeature(event.feature);
+  modalSave.style.display = "block";
 
   document.getElementById("myForm");  //pop up oluşturur.
 }
@@ -104,59 +108,31 @@ window.onclick = function(event) {
 }
 
 
-
-//      Delete - Edit POP-UP
-
-
-//var modalDel = document.getElementById("myModalDel");
-//var span_ = document.getElementsByClassName("closeDel")[0];
-
-
-/*  Delete / Edit Yapılacak!  */
-
-
-
-var feature;
- 
-function ParselEdit(feature) {
-  const { 
-    idParsel, ilParsel, ilceParsel, wktString} = feature.A;
-
-  deleteId = idParsel;
-  document.getElementById('ilDelete').value = ilParsel;
-  document.getElementById('ilceDelete').value = ilceParsel;
-  var editWkt = feature.A.wktString;
-  var editId = feature.A.idParsel;
-
-
-
-
-
   /*    jQuery - AJAX    */
 
-  function getParsel(){
-    $.ajax({
-      type: 'get',
-      url: 'https://localhost:44318/api/parsel/all',
-      dataType: 'json',
-      contentType: 'application/json',
-      data:{"data":"check"},
-      success: function(data){
-        for (var i in data){
-          insert_function_ontable(data[i].id,data[i].wkt,data[i].sehir,data[i].ilce);
+function getParsel() {
+  $.ajax({
+    type: 'GET',
+    url: 'https://localhost:44318/api/parsel/all',
+    dataType: 'json',
+    contentType: 'application/json',
+    data:{"data":"check"},
+    success: function(data){
+      for (var i in data){
+        insert_function_ontable(data[i].id, data[i].wkt, data[i].sehir, data[i].ilce);
       } 
     }
   });
-  }
+}
 
 
 function postParsel() {                   // tüm parsel verilerini listeler.
   $.ajax({
-    type:"post",
-    url:"https://localhost:44318/api/parsel",
+    type:"POST",
+    url:"https://localhost:44318/api/parsel/all",
     dataType: "json",
     contentType: "application/json",
-    data: JSON.stringify({'wkt':wkt, 'sehir':sehir, 'ilce':ilce}),
+    data: JSON.stringify({  'Wkt' : testWkt , 'IlParsel' : sehir , 'IlceParsel' : ilce , 'MahalleParsel' : mahalle }),
     success: function (message){
       alert( "Veriler Başarıyla POST Edildi!" );
     }
@@ -164,184 +140,85 @@ function postParsel() {                   // tüm parsel verilerini listeler.
 } 
 
 
-function addParsel(id, sehir, wkt, ilce) {
-  $.ajax({
-    type: "add",                                  
-    url: "https://localhost:44318/api/parsel/add",
-    dataType: "json",                              
-    contentType: "application/json",
-    data: JSON.stringify({"id": id, "sehir": sehir, "wkt": wkt, "ilce": ilce}),
-    success: function(message){                        
-      alert( "Veri Başarıyla Eklendi!" );
-    }
-  })
-}
-
-
-function updateParsel(id,new_sehir,new_wkt,new_ilce) {   // güncellenecek parselin yeni parametreleri
-  $.ajax({
-    type: "post",                                       // yapılacak işlem türü
-    url: "https://localhost:44318/api/parsel/update",
-    dataType: "json",                                   // JSON formatında veri gönderir.
-    contentType: "application/json",
-    data: JSON.stringify({"id": id, "sehir": new_sehir, "wkt": new_wkt, "ilce":new_ilce}),
-    success: function(message){                         // başarılıysa alert verir.
-      alert( "Veri Başarıyla Güncellendi!" );
-    }
-  })
-}
-
-
-$(document).ready(function(){
-  $("#delButton").on("click", function(){
-    $.ajax({
-      type: "delete",                 
-      url: "https://localhost:44318/api/parsel/delete",
-      dataType:"json",
-      contentType: "application/json",
-      data: JSON.stringify({"id": id, "sehir": new_sehir, "wkt": new_wkt, "ilce":new_ilce}),
-      success: function(message){
-        alert( "Veri Başarıyla Silindi!" );
-      }
-    })
-  })
-})
-
-
-$(document).ready(function(){
-	$("#saveButton").on("click", function(){ 
-		var saveForm = $("#parselForm").serialize(); 
-		$.ajax({
-			url:'https://localhost:44318/api/parsel/update', 
-			type:'POST', 
-			data: saveForm,
-			success:function(e){ 
-				$("div").html("").html(e);  // her seferinde div boş hale getirir gelen verileri ekler
-			}
-		});
-		
-	});
-});
-
-
-$(document).ready(function(){
-	$("#delButton").on("click", function(){ 
-		var deleteForm = $("#parselDelForm").serialize(); 
-		$.ajax({
-			url:'https://localhost:44318/api/parsel/delete', 
-			type:'POST', 
-			data: deleteForm,
-			success:function(e){ 
-				$("div").html("").html(e);
-			}
-		});
-	});
-});
-
-
-
-/*
-
-function submitFormAjax() {
-  var form = document.getElementById('parselSaveForm');
-  var formData = new FormData(form);
-  
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/submit-form');
-  xhr.onload = function() {
-    if (xhr.status === 200) {                 
-      alert(' Form başarıyla gönderildi! ');
-    } 
-    else {
-      alert(' Form gönderme başarısız! ');
-    }
-  };
-  xhr.send(formData);
-}
-   
-
-document.getElementById('saveButton').addEventListener('click', function() {  
-  submitFormAjax();
-});                        //buttona listener atar ve save butonuna basıldığında submitFormAjax fonksiyonunu çağırır. 
-
-document.getElementById('updButton').addEventListener('click', function() {  
-  submitFormAjax();
-});
-
-document.getElementById('delButton').addEventListener('click', function() {  
-  submitFormAjax();
-});
-
-*/
-
-
-//       http request 
+// verileri listeleme   
 
 var xhr = new XMLHttpRequest();
-var url = "https://localhost:44318/api/parsel/all";
-
-xhr.open("GET", url, true);
-xhr.onreadystatechange = function() {
-  if (xhr.readyState === 4 && xhr.status === 200) {
-    var result = JSON.parse(xhr.responseText);
-    console.log(result);
-  }
-};
-xhr.send();
-
- //       verileri listeleme   
-
-var xhr = new XMLHttpRequest();
+var url = 'https://localhost:44318/api/parsel/all';
     
 xhr.open("GET", url, true);
 xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {     // readyState ve status değerlendirildi.
+    if (this.readyState == 4 && this.status == 200) {   // readyState ve status değerlendirildi.
+      
       var veri = JSON.parse(this.responseText);           // JSON Formatında verileri alırız.
       var table = document.getElementById("parselTable").getElementsByTagName('tbody')[0];
+      
       for(var i = 0; i < veri.length; i++) {
         var row = table.insertRow(i);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
         var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
 
         // satırlara verilecek verilerin idleri yazıldı. 
         //Tabloya yazdırılacak veriler eklenmiş oldu.
+        
         cell1.innerHTML = veri[i].idParsel;
         cell2.innerHTML = veri[i].ilParsel;
         cell3.innerHTML = veri[i].ilceParsel;
         cell4.innerHTML = veri[i].mahalleParsel;
-          
+        cell5.innerHTML = veri[i].wkt;
       }
     }
 };
 xhr.send();
 
-//       Tablo veri güncelleme 
+var testWkt;
 
-xhr.open("GET", url, true);
+// wkt konsola yazdırma 
+map.on('click', function(evt) {     // onclick eventi tanımlandı.
+  var feature = map.forEachFeatureAtPixel(evt.pixel,
+    function(feature) {
+      return feature;
+    });
+  if (feature) {
+    // özelliğin WKT geometrisini alır
+    var wktGeometry = new ol.format.WKT().writeGeometry(feature.getGeometry());   // çizimleri wkt formatına dönüştürür.
+    console.log(wktGeometry);     // point(0,0) olarak konsola yazdırır.
+    testWkt=wktGeometry;          // konsoldaki koordinatı testWkt değişkeninde tabloya ekliyoruz.
+  }
+});
 
-xhr.onreadystatechange = function() {
-  if (this.readyState == 4 && this.status == 200) {
 
-		var data = JSON.parse(this.responseText);
-
-		var table = document.getElementById("parselTable");
-			for (var i = 0; i < data.length; i++) {
-				var row = table.insertRow(i+1);
-				var cell1 = row.insertCell(0);
-				var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
-        cell1.innerHTML = data[i].idParsel;
-				cell2.innerHTML = data[i].ilParsel;
-				cell3.innerHTML = data[i].ilceParsel;
-        cell4.innerHTML = data[i].mahalleParsel;
-
-			}
-	} 
-};
-
-xhr.send();
-
+//  $("#----").val();
+function submitDataToServer(data) {
+  var sehir = $("#ilSave").val();
+  var ilce = $("#ilceSave").val();
+  var mahalle = $("#mahalleSave").val();
+  
+  $.ajax({
+    type:"POST",
+    url:"https://localhost:44318/api/parsel/add",
+    dataType: "json",
+    contentType: "application/json",
+    data: JSON.stringify({ 'Wkt' : testWkt , 'IlParsel' : sehir ,'IlceParsel' : ilce , 'MahalleParsel' : mahalle }),
+    success: function (message){
+      console.log(" Veriler POST edildi ! ");
+    }
+  })
 }
+
+
+// pop-up kayıt sonrası kapanır 
+// sayfa otomatik refreshlenir
+document.getElementById('saveButton').addEventListener('click', function() {  
+  submitDataToServer();
+  location.reload();      // sayfa refreshleme  (şu anlık kullanmaya gerek yok)
+  modalSave.style.display = "none";
+  
+});
+
+
+
+
+

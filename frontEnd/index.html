@@ -62,11 +62,11 @@
           <div class = "SaveForm">
             <form id="parselSaveForm">
               <label for="sehir"> ŞEHİR: </label>
-              <input type="text" id="ilSave">
+              <input type="text" name="sehir" id="ilSave">
               <label for="ilce"> İLÇE: </label>
-              <input type="text" id="ilceSave">
+              <input type="text" name="ilce" id="ilceSave">
               <label for="mahalle"> MAHALLE: </label>
-              <input type="text" id="mahalleSave">
+              <input type="text" name="mahalle" id="mahalleSave">
           </form>
           <br>
 
@@ -75,11 +75,9 @@
           </div>
         </div>
       </div>
+      
 
-
-      <!--
-
-         Edit - Delete 
+         <!--Edit - Delete --> 
       <div id="myModalDel" class="modalDel">
         <div class="modalDel-content">
           <span class="closeDel">  &times; </span>
@@ -102,8 +100,7 @@
         </div>
       </div>
     
-    -->
-
+    <div class="table-content" id="table-content">
       <table id="parselTable" class="table table-hover table-striped">
         <thead>    
           <tr>
@@ -111,10 +108,12 @@
             <th> ŞEHİR </th>
             <th> İLÇE </th>
             <th> MAHALLE </th>
+            <th> WKT </th>
           </tr>
         </thead>
         <tbody> </tbody>
       </table>
+    </div>
   
   <script src="main.js"></script>
 
